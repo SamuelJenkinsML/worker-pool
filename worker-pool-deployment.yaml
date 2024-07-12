@@ -1,22 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: worker-pool
+  name: workerpool
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: worker-pool
+      app: workerpool
   template:
     metadata:
       labels:
-        app: worker-pool
+        app: workerpool
     spec:
       containers:
-        - name: worker-pool
+        - name: workerpool
           image: worker-pool:latest
+          imagePullPolicy: Never
           env:
             - name: REDIS_ADDR
-              value: "redis:6379"
-            - name: QUEUE_NAME
-              value: "ml-tasks"
+              value: "redis-service:6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+
