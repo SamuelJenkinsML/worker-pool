@@ -10,9 +10,10 @@ clean:
 
 build-worker:
 	docker build -t worker-pool:latest
+	eval $$(minikube docker-env) && docker build -t worker-pool:latest .
 
-deploy-worker: build-worker
+deploy: build-worker
 	kubectl apply -f worker-pool-deployment.yaml
 
-redeploy-worker: build-worker
+redeploy: build-worker
 	kubectl rollout restart deployment worker-pool

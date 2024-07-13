@@ -15,7 +15,6 @@ minikube addons enable metrics-server
 kubectl create deployment redis --image=redis
 kubectl expose deployment redis --port=6379 --target-port=6379
 
-# Wait for Redis to be ready
 while [[ $(kubectl get pods -l app=redis -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
 	echo "Waiting for Redis pod to be ready..."
 	sleep 5
@@ -23,7 +22,6 @@ done
 
 kubectl apply -f worker-pool-deployment.yaml
 
-# Wait for worker pool to be ready
 while [[ $(kubectl get pods -l app=worker-pool -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
 	echo "Waiting for worker pool pod to be ready..."
 	sleep 5
